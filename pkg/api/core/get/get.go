@@ -68,11 +68,11 @@ func GettingDeviceConfig() error {
 		})
 	}
 
-	err := GitPush(pushConfigs)
-	if err != nil {
-		debug.Err("[GitPush]", err)
-		return err
-	}
+	//err := GitPush(pushConfigs)
+	//if err != nil {
+	//	debug.Err("[GitPush]", err)
+	//	return err
+	//}
 
 	return nil
 }

@@ -1,4 +1,4 @@
 .idea
 cmd/backend/*.json
-cmd/backend/config
+cmd/backend/conflig
 *.json

@@ -11,11 +11,12 @@ type Template struct {
 }
 
 type OSTemplate struct {
-	OSType      string   `json:"os_type"`
-	Commands    []string `json:"commands"`
-	ConfigStart string   `json:"config_start"`
-	ConfigEnd   string   `json:"config_end"`
-	IgnoreLine  []string `json:"ignore_line"`
+	OSType       string   `json:"os_type"`
+	Commands     []string `json:"commands"`
+	ConfigStart  string   `json:"config_start"`
+	ConfigEnd    string   `json:"config_end"`
+	IgnoreLine   []string `json:"ignore_line"`
+	InputConsole bool     `json:"input_console"`
 }
 
 var Tpl Template

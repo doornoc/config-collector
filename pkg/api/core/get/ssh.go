@@ -92,12 +92,20 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 	cancel1 := make(chan struct{})
 	cancel2 := make(chan struct{})
 
+	osTemplate, err := config.GetTemplateByOSType(s.Device.OSType)
+	if err != nil {
+		debug.Err("[OS Type]", err)
+	}
+
 	//stdin
 	go func() {
 		for {
 			select {
 			case b := <-inCh:
 				stdin.Write(b)
+				if osTemplate.InputConsole {
+					consoleLog += string(b)
+				}
 			case <-cancel1:
 				session.Close()
 				return
@@ -128,21 +136,13 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 		}
 	}()
 
-	osTemplate, err := config.GetTemplateByOSType(s.Device.OSType)
-	if err != nil {
-		debug.Err("[OS Type]", err)
-	}
-
 	for _, command := range osTemplate.Commands {
 		time.Sleep(3 * time.Second)
 		inCh <- []byte(command + "\n")
 	}
 
 	time.Sleep(3 * time.Second)
-	err = session.Close()
-	if err != nil {
-		return consoleLog, err
-	}
+	session.Close()
 	// end
 	close(cancel1)
 	close(cancel2)

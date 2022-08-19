@@ -17,9 +17,11 @@
     {
       "os_type": "vyos",
       "commands": [
-        "show configuration | no-more"
+        "show configuration |no-more",
+        "exit"
       ],
       "ignore_line": [],
+      "input_console": true,
       "config_start": "$ show configuration",
       "config_end": "$ exit"
     },

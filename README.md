@@ -11,11 +11,12 @@
 ## Template
 sample templateは/config/template.jsonにあります
 ```
-- os_type:      OS Type
-- commands:     実行するコマンド(配列順に実行)
-- config_start: config判定開始時の文字列(一部一致した次の行から抽出を開始)
-- config_end:   config判定終了時の文字列(一部一致した次の行から抽出を終了)
-- ignore_line:  必要のないconfig行を削除(一部一致した行がconfigから削除)
+- os_type:       OS Type
+- commands:      実行するコマンド(配列順に実行)
+- config_start:  config判定開始時の文字列(一部一致した次の行から抽出を開始)
+- config_end:    config判定終了時の文字列(一部一致した次の行から抽出を終了)
+- ignore_line:   必要のないconfig行を削除(一部一致した行がconfigから削除)
+- input_console: 特殊オプション
 ```
 
 ## Config
