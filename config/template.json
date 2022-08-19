@@ -1,0 +1,27 @@
+{
+  "templates": [
+    {
+      "os_type": "ix",
+      "commands": [
+        "conf t",
+        "terminal length 0",
+        "show run",
+        "exit"
+      ],
+      "ignore_line": [
+        "Current time"
+      ],
+      "config_start": "(config)# show run",
+      "config_end": "(config)# exit"
+    },
+    {
+      "os_type": "vyos",
+      "commands": [
+        "show configuration | no-more"
+      ],
+      "ignore_line": [],
+      "config_start": "$ show configuration",
+      "config_end": "$ exit"
+    }
+  ]
+}
