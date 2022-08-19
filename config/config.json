@@ -10,7 +10,7 @@
     "slack_webhook": "[slack webhook]",
     "tmp_path": "/tmp",
     "exec_time": 20,
-    "debug": true,
+    "debug": true
   },
   "devices": [
     {
