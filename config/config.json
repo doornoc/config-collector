@@ -1,0 +1,25 @@
+{
+  "controller": {
+    "timezone": "Asia/Tokyo",
+    "github": {
+      "repo": "https://[domain]/[org]/[repo]",
+      "user": "user",
+      "pass": "pass",
+      "branch": "main"
+    },
+    "slack_webhook": "[slack webhook]",
+    "tmp_path": "/tmp",
+    "exec_time": 20,
+    "debug": true,
+  },
+  "devices": [
+    {
+      "name": "gw1",
+      "hostname": "10.100.1.1",
+      "port": 22,
+      "user": "user",
+      "password": "pass",
+      "os_type": "ix"
+    }
+  ]
+}
