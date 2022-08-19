@@ -9,6 +9,7 @@
 ```docker compose up -d```
 
 ## Template
+sample templateは/config/template.jsonにあります
 ```
 - os_type:      OS Type
 - commands:     実行するコマンド(配列順に実行)
@@ -18,6 +19,7 @@
 ```
 
 ## Config
+sample templateは/config/config.jsonにあります
 ### Global
 ```
 - timezone:      Go言語のTimeZone
