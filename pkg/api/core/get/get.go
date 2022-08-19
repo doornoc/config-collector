@@ -160,8 +160,8 @@ func GitPush(configs []PushConfig) error {
 
 	_, err = w.Commit("Updated ("+t.In(tokyo).Format(time.RFC3339)+")", &git.CommitOptions{
 		Author: &object.Signature{
-			Name:  "",
-			Email: "<>",
+			Name:  config.Conf.Controller.Github.GithubAuthor.Name,
+			Email: config.Conf.Controller.Github.GithubAuthor.Email,
 			When:  time.Now(),
 		},
 	})

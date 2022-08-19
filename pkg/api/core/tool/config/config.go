@@ -21,10 +21,11 @@ type Controller struct {
 }
 
 type Github struct {
-	Repo   string `json:"repo"`
-	User   string `json:"user"`
-	Pass   string `json:"pass"`
-	Branch string `json:"branch"`
+	Repo         string       `json:"repo"`
+	User         string       `json:"user"`
+	Pass         string       `json:"pass"`
+	Branch       string       `json:"branch"`
+	GithubAuthor GithubAuthor `json:"author"`
 }
 
 type GithubAuthor struct {
