@@ -10,6 +10,8 @@ RUN go build -o /backend
 
 ## Deploy
 FROM ubuntu:22.04
+ENV TZ=Asia/Tokyo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR /opt/
 COPY --from=build /backend /opt/backend
