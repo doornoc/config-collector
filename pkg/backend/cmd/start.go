@@ -30,10 +30,10 @@ var startOnceCmd = &cobra.Command{
 		}
 
 		if config.GetConfig(confPath) != nil {
-			log.Fatalf("error config process |%v", err)
+			log.Fatal("getting config", err)
 		}
 		if config.GetTemplate(templatePath) != nil {
-			log.Fatalf("error config process |%v", err)
+			log.Fatal("getting template", err)
 		}
 
 		err = get.GettingDeviceConfig()
@@ -60,10 +60,10 @@ var startCronCmd = &cobra.Command{
 		}
 
 		if config.GetConfig(confPath) != nil {
-			log.Fatalf("error config process |%v", err)
+			log.Fatal("getting config", err)
 		}
 		if config.GetTemplate(templatePath) != nil {
-			log.Fatalf("error config process |%v", err)
+			log.Fatal("getting template", err)
 		}
 
 		err = get.CronExec()

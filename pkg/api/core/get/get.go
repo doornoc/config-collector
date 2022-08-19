@@ -27,12 +27,12 @@ func CronExec() error {
 			beforeNextTimer := config.Conf.Controller.ExecTime
 			err := config.GetConfig(config.ConfigPath)
 			if err != nil {
-				log.Println(err)
+				log.Println("getting config", err)
 				notify.NotifyErrorToSlack(err)
 			}
 			err = config.GetTemplate(config.TplConfigPath)
 			if err != nil {
-				log.Println(err)
+				log.Println("getting template config", err)
 				notify.NotifyErrorToSlack(err)
 			}
 
