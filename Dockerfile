@@ -13,6 +13,6 @@ FROM ubuntu:22.04
 
 WORKDIR /opt/
 COPY --from=build /backend /opt/backend
-RUN apt-get update && apt install -y ssh tzdata && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt install -y ssh tzdata git && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 CMD ["/opt/backend", "start", "cron", "--config", "/opt/config.json", "--template", "/opt/template.json"]
