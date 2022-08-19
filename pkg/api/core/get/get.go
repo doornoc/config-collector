@@ -151,7 +151,7 @@ func GitPush(configs []PushConfig) error {
 
 	t := time.Now().UTC()
 
-	tokyo, err := time.LoadLocation("Asia/Tokyo")
+	tokyo, err := time.LoadLocation(config.Conf.Controller.TimeZone)
 	if err != nil {
 		debug.Err("[UTC to JST]", err)
 		return err
