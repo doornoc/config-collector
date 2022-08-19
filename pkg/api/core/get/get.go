@@ -3,6 +3,7 @@ package get
 import (
 	"fmt"
 	"github.com/doornoc/config-collector/pkg/api/core/tool/config"
+	"github.com/doornoc/config-collector/pkg/api/core/tool/notify"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
@@ -11,6 +12,45 @@ import (
 	"os"
 	"time"
 )
+
+var getConfTimer uint = 10
+
+func CronExec() error {
+	getConfTick := time.NewTicker(time.Duration(getConfTimer) * time.Second)
+	getInfoTick := time.NewTicker(time.Duration(config.Conf.Controller.ExecTime) * time.Second)
+
+	log.Printf("start for cron\n")
+	for {
+		select {
+		case <-getConfTick.C:
+			beforeNextTimer := config.Conf.Controller.ExecTime
+			err := config.GetConfig(config.ConfigPath)
+			if err != nil {
+				log.Println(err)
+				notify.NotifyErrorToSlack(err)
+			}
+			err = config.GetTemplate(config.TplConfigPath)
+			if err != nil {
+				log.Println(err)
+				notify.NotifyErrorToSlack(err)
+			}
+
+			log.Printf("config timer: %d\n", config.Conf.Controller.ExecTime)
+			if config.Conf.Controller.ExecTime != beforeNextTimer {
+				getInfoTick = time.NewTicker(time.Duration(config.Conf.Controller.ExecTime) * time.Second)
+				log.Printf("New NextTimer: %d\n", config.Conf.Controller.ExecTime)
+			}
+		case <-getInfoTick.C:
+			err := GettingDeviceConfig()
+			if err != nil {
+				log.Println(err)
+				notify.NotifyErrorToSlack(err)
+			}
+		}
+	}
+
+	return nil
+}
 
 func GettingDeviceConfig() error {
 	var pushConfigs []PushConfig

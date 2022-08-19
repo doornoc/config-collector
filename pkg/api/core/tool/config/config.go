@@ -16,6 +16,7 @@ type Controller struct {
 	Github       Github `json:"github"`
 	TmpPath      string `json:"tmp_path"`
 	SlackWebhook string `json:"slack_webhook"`
+	ExecTime     uint   `json:"exec_time"`
 }
 
 type Github struct {
@@ -35,12 +36,14 @@ type Device struct {
 }
 
 var Conf Config
+var ConfigPath string
 
 func GetConfig(inputConfPath string) error {
-	configPath := "./data.json"
+	configPath := "./config.json"
 	if inputConfPath != "" {
 		configPath = inputConfPath
 	}
+	ConfigPath = configPath
 	file, err := ioutil.ReadFile(configPath)
 	if err != nil {
 		return err
@@ -51,5 +54,9 @@ func GetConfig(inputConfPath string) error {
 		log.Fatal(err)
 	}
 	Conf = data
+	// when execTime == ""
+	if Conf.Controller.ExecTime == 0 {
+		Conf.Controller.ExecTime = 10
+	}
 	return nil
 }

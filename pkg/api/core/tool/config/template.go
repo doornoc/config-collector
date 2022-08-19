@@ -19,14 +19,15 @@ type OSTemplate struct {
 }
 
 var Tpl Template
+var TplConfigPath string
 
 func GetTemplate(inputConfPath string) error {
-	configPath := "./template.json"
+	templateConfigPath := "./template.json"
 	if inputConfPath != "" {
-		configPath = inputConfPath
+		templateConfigPath = inputConfPath
 	}
-
-	file, err := ioutil.ReadFile(configPath)
+	TplConfigPath = templateConfigPath
+	file, err := ioutil.ReadFile(templateConfigPath)
 	if err != nil {
 		return err
 	}
