@@ -5,7 +5,11 @@
       "repo": "https://[domain]/[org]/[repo]",
       "user": "user",
       "pass": "pass",
-      "branch": "main"
+      "branch": "main",
+      "author": {
+        "name": "Your Name",
+        "email": "Your Email"
+      }
     },
     "slack_webhook": "[slack webhook]",
     "tmp_path": "/tmp",

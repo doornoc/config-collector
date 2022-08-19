@@ -7,6 +7,7 @@ import (
 	"github.com/doornoc/config-collector/pkg/api/core/tool/notify"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
+	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/go-git/go-git/v5/plumbing/transport/http"
 	"io/ioutil"
 	"log"
@@ -157,7 +158,13 @@ func GitPush(configs []PushConfig) error {
 		return err
 	}
 
-	_, err = w.Commit("Updated ("+t.In(tokyo).Format(time.RFC3339)+")", &git.CommitOptions{})
+	_, err = w.Commit("Updated ("+t.In(tokyo).Format(time.RFC3339)+")", &git.CommitOptions{
+		Author: &object.Signature{
+			Name:  "",
+			Email: "<>",
+			When:  time.Now(),
+		},
+	})
 	if err != nil {
 		return err
 	}

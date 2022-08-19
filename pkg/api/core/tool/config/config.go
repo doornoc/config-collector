@@ -27,6 +27,11 @@ type Github struct {
 	Branch string `json:"branch"`
 }
 
+type GithubAuthor struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
 type Device struct {
 	Name     string `json:"name"`
 	Hostname string `json:"hostname"`
