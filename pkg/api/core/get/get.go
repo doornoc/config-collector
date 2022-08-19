@@ -105,7 +105,6 @@ func GitPush(configs []PushConfig) error {
 
 	if plainErr != nil {
 		repo, err = git.PlainOpen(config.Conf.Controller.TmpPath)
-		log.Println(err)
 		if err != nil {
 			if plainErr != nil {
 				debug.Err("[git clone]", plainErr)
