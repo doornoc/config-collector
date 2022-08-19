@@ -3,6 +3,7 @@ package get
 import (
 	"fmt"
 	"github.com/doornoc/config-collector/pkg/api/core/tool/config"
+	"github.com/doornoc/config-collector/pkg/api/core/tool/debug"
 	"github.com/doornoc/config-collector/pkg/api/core/tool/notify"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
@@ -35,7 +36,6 @@ func CronExec() error {
 				notify.NotifyErrorToSlack(err)
 			}
 
-			log.Printf("config timer: %d\n", config.Conf.Controller.ExecTime)
 			if config.Conf.Controller.ExecTime != beforeNextTimer {
 				getInfoTick = time.NewTicker(time.Duration(config.Conf.Controller.ExecTime) * time.Second)
 				log.Printf("New NextTimer: %d\n", config.Conf.Controller.ExecTime)
@@ -43,7 +43,7 @@ func CronExec() error {
 		case <-getInfoTick.C:
 			err := GettingDeviceConfig()
 			if err != nil {
-				log.Println(err)
+				log.Println("GettingDeviceConfig", err)
 				notify.NotifyErrorToSlack(err)
 			}
 		}
@@ -58,8 +58,8 @@ func GettingDeviceConfig() error {
 		s := sshStruct{Device: device}
 		console, err := s.accessSSHShell()
 		if err != nil {
-			log.Println(err)
-			//return err
+			debug.Err("[accessSSHShell]", err)
+			notify.NotifyErrorToSlack(err)
 		}
 		pushConfigs = append(pushConfigs, PushConfig{
 			Name:          device.Name,
@@ -69,6 +69,7 @@ func GettingDeviceConfig() error {
 
 	err := GitPush(pushConfigs)
 	if err != nil {
+		debug.Err("[GitPush]", err)
 		return err
 	}
 
@@ -93,6 +94,7 @@ func GitPush(configs []PushConfig) error {
 			Auth: auth,
 		}
 	} else {
+		debug.Deb("[Git auth]", "key authentication is not supported...")
 		return fmt.Errorf("key authentication is not supported...")
 	}
 
@@ -106,24 +108,24 @@ func GitPush(configs []PushConfig) error {
 		log.Println(err)
 		if err != nil {
 			if plainErr != nil {
-				log.Println("[git clone]", plainErr)
+				debug.Err("[git clone]", plainErr)
 				return plainErr
 			}
-			log.Println("[git pull]", err)
+			debug.Err("[git pull]", err)
 			return err
 		}
 	}
 
 	w, err := repo.Worktree()
 	if err != nil {
-		log.Println("git worktree", err)
+		debug.Err("[git worktree]", err)
 		return err
 	}
 	err = w.Checkout(&git.CheckoutOptions{
 		Branch: plumbing.NewBranchReferenceName(config.Conf.Controller.Github.Branch),
 	})
 	if err != nil {
-		log.Println("git checkout", err)
+		debug.Err("[git checkout]", err)
 		return err
 	}
 
@@ -131,27 +133,28 @@ func GitPush(configs []PushConfig) error {
 		// Create new file
 		path := config.Conf.Controller.TmpPath + "/" + console.Name
 		ioutil.WriteFile(path, []byte(console.ConfigConsole), 0644)
-		log.Println("git add path: " + path)
+		debug.Deb("git add path", path)
+		debug.Err("[git add]", err)
+
 		_, err = w.Add(console.Name)
 		if err != nil {
-			log.Println("[git add]", err)
+			debug.Err("[git add]", err)
 			return err
 		}
 	}
 
-	fmt.Println(w.Status())
 	status, _ := w.Status()
 
 	if status.IsClean() {
-		log.Println("No need to commit")
+		debug.Deb("[*normal* git status] ", "No need to commit")
 		return nil
 	}
 
 	t := time.Now().UTC()
-	fmt.Println(t)
 
 	tokyo, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
+		debug.Err("[UTC to JST]", err)
 		return err
 	}
 
@@ -165,6 +168,7 @@ func GitPush(configs []PushConfig) error {
 		Auth: auth,
 	})
 	if err != nil {
+		debug.Err("[git commit]", err)
 		return err
 	}
 

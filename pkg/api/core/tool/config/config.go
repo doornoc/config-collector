@@ -17,6 +17,7 @@ type Controller struct {
 	TmpPath      string `json:"tmp_path"`
 	SlackWebhook string `json:"slack_webhook"`
 	ExecTime     uint   `json:"exec_time"`
+	Debug        bool   `json:"debug"`
 }
 
 type Github struct {

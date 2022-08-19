@@ -2,6 +2,7 @@ package get
 
 import (
 	"github.com/doornoc/config-collector/pkg/api/core/tool/config"
+	"github.com/doornoc/config-collector/pkg/api/core/tool/debug"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"os"
@@ -45,26 +46,27 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 
 	client, err := ssh.Dial("tcp", s.Device.Hostname+":"+strconv.Itoa(int(s.Device.Port)), sshConfig)
 	if err != nil {
-		log.Fatal("Failed to dial: ", err)
-		return consoleLog, nil
+		debug.Err("[SSH Dial]", err)
+		return consoleLog, err
 	}
 	defer client.Close()
 
 	session, err := client.NewSession()
 	if err != nil {
-		log.Fatal("Failed to create session: ", err)
+		debug.Err("[client.NewSession]", err)
+		return consoleLog, err
 	}
 	defer session.Close()
 
 	stdin, err := session.StdinPipe()
 	if err != nil {
-		log.Fatal(err)
+		debug.Err("[session.StdinPipe]", err)
 		return consoleLog, err
 	}
 
 	stdout, err := session.StdoutPipe()
 	if err != nil {
-		log.Fatal(err)
+		debug.Err("[session.StdoutPipe]", err)
 		return consoleLog, err
 	}
 
@@ -76,11 +78,13 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 	term := os.Getenv("TERM")
 	err = session.RequestPty(term, 25, 80, modes)
 	if err != nil {
+		debug.Err("[session.RequestPty]", err)
 		return consoleLog, err
 	}
 
 	err = session.Shell()
 	if err != nil {
+		debug.Err("[session.Shell]", err)
 		return consoleLog, err
 	}
 
@@ -116,7 +120,7 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 					n, err := stdout.Read(buf)
 					consoleLog += string(buf[:n])
 					if err != nil {
-						log.Println("ERR")
+						debug.Err("[*normal* stdout finish]", err)
 						return
 					}
 				}
@@ -126,13 +130,12 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 
 	osTemplate, err := config.GetTemplateByOSType(s.Device.OSType)
 	if err != nil {
-		log.Fatalf(err.Error())
+		debug.Err("[OS Type]", err)
 	}
 
 	for _, command := range osTemplate.Commands {
 		time.Sleep(3 * time.Second)
 		inCh <- []byte(command + "\n")
-		log.Println(command)
 	}
 
 	time.Sleep(3 * time.Second)
@@ -144,19 +147,19 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 	close(cancel1)
 	close(cancel2)
 
-	log.Println("====================-")
-	log.Println(consoleLog)
-	log.Println("====================-")
+	if config.Conf.Controller.Debug {
+		log.Println("==========Console==========-")
+		log.Println(consoleLog)
+		log.Println("====================-")
+	}
 
 	configConsole := ""
 	isConfig := false
 	for _, configConsoleLine := range strings.Split(consoleLog, "\n") {
 		if strings.Contains(configConsoleLine, osTemplate.ConfigStart) {
-			log.Println("test1")
 			isConfig = true
 		}
 		if strings.Contains(configConsoleLine, osTemplate.ConfigEnd) {
-			log.Println("test2")
 			isConfig = false
 		}
 
@@ -173,9 +176,12 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 			}
 		}
 	}
-	log.Println("====================-")
-	log.Println(configConsole)
-	log.Println("====================-")
+
+	if config.Conf.Controller.Debug {
+		log.Println("==========Config==========-")
+		log.Println(configConsole)
+		log.Println("====================-")
+	}
 
 	return configConsole, nil
 }
