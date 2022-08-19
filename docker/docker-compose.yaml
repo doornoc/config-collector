@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  config-collector:
+    image: yoneyan/config-collector
+    volumes:
+      - ./config.json:/opt/config.json
+      - ./template.json:/opt/template.json
+    network_mode: bridge
