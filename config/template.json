@@ -22,6 +22,17 @@
       "ignore_line": [],
       "config_start": "$ show configuration",
       "config_end": "$ exit"
+    },
+    {
+      "os_type": "cisco",
+      "commands": [
+        "terminal length 0",
+        "show running-config all",
+        "configuration end"
+      ],
+      "ignore_line": [],
+      "config_start": "#show running-config all",
+      "config_end": "#configuration end"
     }
   ]
 }
