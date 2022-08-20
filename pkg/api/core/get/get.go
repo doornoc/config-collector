@@ -25,6 +25,7 @@ func CronExec() error {
 	for {
 		select {
 		case <-getConfTick.C:
+			log.Println("Getting global config and template.")
 			beforeNextTimer := config.Conf.Controller.ExecTime
 			err := config.GetConfig(config.ConfigPath)
 			if err != nil {
@@ -42,6 +43,7 @@ func CronExec() error {
 				log.Printf("New NextTimer: %d\n", config.Conf.Controller.ExecTime)
 			}
 		case <-getInfoTick.C:
+			log.Println("Getting network config.")
 			debug.Deb("getConfig", "")
 			err := GettingDeviceConfig()
 			if err != nil {
@@ -59,6 +61,9 @@ func GettingDeviceConfig() error {
 	for _, device := range config.Conf.Devices {
 		s := sshStruct{Device: device}
 		console, err := s.accessSSHShell()
+		if console == "" {
+			debug.Err("[console config]", fmt.Errorf("consoleConfig is empty"))
+		}
 		if err != nil {
 			debug.Err("[accessSSHShell]", err)
 			notify.NotifyErrorToSlack(err)
