@@ -130,7 +130,6 @@ func GitPush(configs []PushConfig) error {
 	})
 	if err != nil {
 		debug.Err("[git fetch]", err)
-		return err
 	}
 
 	remoteRef, err := repo.Reference(plumbing.NewRemoteReferenceName("origin", config.Conf.Controller.Github.Branch), true)
