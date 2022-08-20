@@ -123,12 +123,35 @@ func GitPush(configs []PushConfig) error {
 		debug.Err("[git worktree]", err)
 		return err
 	}
-	err = w.Checkout(&git.CheckoutOptions{
-		Branch: plumbing.NewBranchReferenceName(config.Conf.Controller.Github.Branch),
+
+	err = repo.Fetch(&git.FetchOptions{
+		RemoteName: "origin",
+		Auth:       auth,
 	})
 	if err != nil {
-		debug.Err("[git checkout]", err)
+		debug.Err("[git fetch]", err)
 		return err
+	}
+
+	remoteRef, err := repo.Reference(plumbing.NewRemoteReferenceName("origin", config.Conf.Controller.Github.Branch), true)
+	if err != nil {
+		debug.Err("[repo.Reference remote]", err)
+		return err
+	}
+
+	localRef, err := repo.Head()
+	if err != nil {
+		debug.Err("[repo.Reference local]", err)
+		return err
+	}
+
+	if localRef.Hash() != remoteRef.Hash() {
+		debug.Deb("git reset --hard", "process...")
+		err = w.Reset(&git.ResetOptions{Mode: git.HardReset, Commit: remoteRef.Hash()})
+		if err != nil {
+			debug.Err("[git reset]", err)
+			return err
+		}
 	}
 
 	for _, console := range configs {
