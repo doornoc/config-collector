@@ -61,11 +61,12 @@ func GettingDeviceConfig() error {
 		if err != nil {
 			debug.Err("[accessSSHShell]", err)
 			notify.NotifyErrorToSlack(err)
+		} else {
+			pushConfigs = append(pushConfigs, PushConfig{
+				Name:          device.Name,
+				ConfigConsole: console,
+			})
 		}
-		pushConfigs = append(pushConfigs, PushConfig{
-			Name:          device.Name,
-			ConfigConsole: console,
-		})
 	}
 
 	err := GitPush(pushConfigs)
