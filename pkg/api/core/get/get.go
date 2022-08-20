@@ -62,11 +62,13 @@ func GettingDeviceConfig() error {
 		s := sshStruct{Device: device}
 		console, err := s.accessSSHShell()
 		if console == "" {
-			debug.Err("[console config]", fmt.Errorf("consoleConfig is empty"))
+			debug.Err(fmt.Sprintf("Hostname: "+device.Name+"\n[accessSSHShell]: "), fmt.Errorf("consoleConfig is empty"))
+			notify.NotifyErrorToSlack(fmt.Errorf("Hostname: " + device.Name + "\n[accessSSHShell]: consoleConfig is empty"))
+			continue
 		}
 		if err != nil {
-			debug.Err("[accessSSHShell]", err)
-			notify.NotifyErrorToSlack(err)
+			debug.Err(fmt.Sprintf("Hostname: "+device.Name+"\n[accessSSHShell]: "), err)
+			notify.NotifyErrorToSlack(fmt.Errorf("Hostname: "+device.Name+"\n[accessSSHShell]: %s", err))
 		} else {
 			pushConfigs = append(pushConfigs, PushConfig{
 				Name:          device.Name,
