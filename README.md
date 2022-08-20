@@ -5,11 +5,11 @@
 ```./backend start  --config [config path] --template [template config path]```
 - 定期的に起動   
 ```./backend start  --config [config path] --template [template config path]```
-- Execute on container
-```docker compose up -d```
+- Execute on container  
+```cd docker && docker compose up -d```
 
 ## Template
-sample templateは/config/template.jsonにあります
+sample templateはconfig/template.jsonにあります
 ```
 - os_type:       OS Type
 - commands:      実行するコマンド(配列順に実行)
@@ -20,7 +20,7 @@ sample templateは/config/template.jsonにあります
 ```
 
 ## Config
-sample templateは/config/config.jsonにあります
+sample templateはconfig/config.jsonにあります
 ### Global
 ```
 - timezone:      Go言語のTimeZone
