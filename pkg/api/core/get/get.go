@@ -42,6 +42,7 @@ func CronExec() error {
 				log.Printf("New NextTimer: %d\n", config.Conf.Controller.ExecTime)
 			}
 		case <-getInfoTick.C:
+			debug.Deb("getConfig", "")
 			err := GettingDeviceConfig()
 			if err != nil {
 				log.Println("GettingDeviceConfig", err)
@@ -135,7 +136,6 @@ func GitPush(configs []PushConfig) error {
 		path := config.Conf.Controller.TmpPath + "/" + console.Name
 		ioutil.WriteFile(path, []byte(console.ConfigConsole), 0644)
 		debug.Deb("git add path", path)
-		debug.Err("[git add]", err)
 
 		_, err = w.Add(console.Name)
 		if err != nil {
@@ -145,6 +145,7 @@ func GitPush(configs []PushConfig) error {
 	}
 
 	status, _ := w.Status()
+	debug.Deb("git add status", status.String())
 
 	if status.IsClean() {
 		debug.Deb("[*normal* git status] ", "No need to commit")
