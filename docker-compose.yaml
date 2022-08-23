@@ -6,6 +6,5 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./config.json:/opt/config.json
-      - ./template.json:/opt/template.json
+      - ./config:/opt/config
     network_mode: bridge

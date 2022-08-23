@@ -4,6 +4,5 @@ services:
   config-collector:
     image: yoneyan/config-collector:master
     volumes:
-      - ./config.json:/opt/config.json
-      - ./template.json:/opt/template.json
+      - ./config:/opt/config
     network_mode: bridge
