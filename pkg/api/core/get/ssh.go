@@ -154,18 +154,17 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 	}
 
 	configConsole := ""
-	isStart := false
-	isStop := false
+	isConfig := false
 	rowIndex := 0
 	for _, configConsoleLine := range strings.Split(consoleLog, "\n") {
 		if strings.Contains(configConsoleLine, osTemplate.ConfigStart) {
-			isStart = true
+			isConfig = true
 		}
-		if strings.Contains(configConsoleLine, osTemplate.ConfigEnd) && isStart {
-			isStop = true
+		if strings.Contains(configConsoleLine, osTemplate.ConfigEnd) && isConfig {
+			isConfig = false
 		}
 
-		if isStart && !isStop {
+		if isConfig {
 			isIgnoreLine := false
 			for _, ignoreLine := range osTemplate.IgnoreLine {
 				if strings.Contains(configConsoleLine, ignoreLine) {
