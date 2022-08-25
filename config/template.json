@@ -12,7 +12,7 @@
         "Current time"
       ],
       "config_start": "(config)# show run",
-      "config_end": "(config)# exit"
+      "config_end": "(config)#"
     },
     {
       "os_type": "vyos",
