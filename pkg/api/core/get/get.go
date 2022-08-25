@@ -17,7 +17,7 @@ import (
 
 var getConfTimer uint = 10
 
-func CronExec() error {
+func CronExec(isGit bool) error {
 	getConfTick := time.NewTicker(time.Duration(getConfTimer) * time.Second)
 	getInfoTick := time.NewTicker(time.Duration(config.Conf.Controller.ExecTime) * time.Second)
 
@@ -45,7 +45,7 @@ func CronExec() error {
 		case <-getInfoTick.C:
 			log.Println("Getting network config.")
 			debug.Deb("getConfig", "")
-			err := GettingDeviceConfig()
+			err := GettingDeviceConfig(isGit)
 			if err != nil {
 				log.Println("GettingDeviceConfig", err)
 				notify.NotifyErrorToSlack(err)
@@ -56,7 +56,7 @@ func CronExec() error {
 	return nil
 }
 
-func GettingDeviceConfig() error {
+func GettingDeviceConfig(isGit bool) error {
 	var pushConfigs []PushConfig
 	for _, device := range config.Conf.Devices {
 		s := sshStruct{Device: device}
@@ -77,10 +77,12 @@ func GettingDeviceConfig() error {
 		}
 	}
 
-	err := GitPush(pushConfigs)
-	if err != nil {
-		debug.Err("[GitPush]", err)
-		return err
+	if isGit {
+		err := GitPush(pushConfigs)
+		if err != nil {
+			debug.Err("[GitPush]", err)
+			return err
+		}
 	}
 
 	return nil

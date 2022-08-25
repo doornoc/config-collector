@@ -2,11 +2,17 @@
 
 ## 実行方法
 - 一回だけ  
-```./backend start  --config [config path] --template [template config path]```
+```./backend start once --config [config path] --template [template config path]```
 - 定期的に起動   
-```./backend start  --config [config path] --template [template config path]```
+```./backend start cron --config [config path] --template [template config path]```
 - Execute on container  
-```cd docker && docker compose up -d```
+```cd docker && mkdir config && cp ../config/* config/ && docker compose up -d```
+### 動作確認(github commit & push機能を無効)
+- 一回だけ  
+```./backend test once --config [config path] --template [template config path]```
+- 定期的に起動   
+```./backend test cron --config [config path] --template [template config path]```
+
 
 ## Template
 sample templateはconfig/template.jsonにあります

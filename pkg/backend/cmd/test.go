@@ -8,16 +8,16 @@ import (
 	"log"
 )
 
-// startCmd represents the start command
-var startCmd = &cobra.Command{
-	Use:   "start",
-	Short: "start controller",
+// testCmd represents the start command
+var testCmd = &cobra.Command{
+	Use:   "test",
+	Short: "test controller without git function",
 	Long:  ``,
 }
 
-var startOnceCmd = &cobra.Command{
+var testOnceCmd = &cobra.Command{
 	Use:   "once",
-	Short: "start for once",
+	Short: "test for once without git function",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		confPath, err := cmd.Flags().GetString("config")
@@ -36,7 +36,7 @@ var startOnceCmd = &cobra.Command{
 			log.Fatal("getting template", err)
 		}
 
-		err = get.GettingDeviceConfig(true)
+		err = get.GettingDeviceConfig(false)
 		if err != nil {
 			notify.NotifyErrorToSlack(err)
 		}
@@ -45,9 +45,9 @@ var startOnceCmd = &cobra.Command{
 	},
 }
 
-var startCronCmd = &cobra.Command{
+var testCronCmd = &cobra.Command{
 	Use:   "cron",
-	Short: "start for cron",
+	Short: "test for cron without git function",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		confPath, err := cmd.Flags().GetString("config")
@@ -66,7 +66,7 @@ var startCronCmd = &cobra.Command{
 			log.Fatal("getting template", err)
 		}
 
-		err = get.CronExec(true)
+		err = get.CronExec(false)
 		if err != nil {
 			notify.NotifyErrorToSlack(err)
 		}
@@ -76,9 +76,9 @@ var startCronCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(startCmd)
-	startCmd.AddCommand(startOnceCmd)
-	startCmd.AddCommand(startCronCmd)
-	startCmd.PersistentFlags().StringP("config", "c", "", "config path")
-	startCmd.PersistentFlags().StringP("template", "t", "", "config path")
+	rootCmd.AddCommand(testCmd)
+	testCmd.AddCommand(testOnceCmd)
+	testCmd.AddCommand(testCronCmd)
+	testCmd.PersistentFlags().StringP("config", "c", "", "config path")
+	testCmd.PersistentFlags().StringP("template", "t", "", "config path")
 }
