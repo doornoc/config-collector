@@ -159,8 +159,7 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 	for _, configConsoleLine := range strings.Split(consoleLog, "\n") {
 		if strings.Contains(configConsoleLine, osTemplate.ConfigStart) {
 			isConfig = true
-		}
-		if strings.Contains(configConsoleLine, osTemplate.ConfigEnd) && isConfig {
+		} else if strings.Contains(configConsoleLine, osTemplate.ConfigEnd) && isConfig {
 			isConfig = false
 		}
 
