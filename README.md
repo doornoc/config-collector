@@ -24,6 +24,20 @@ sample templateはconfig/template.jsonにあります
 - ignore_line:   必要のないconfig行を削除(一部一致した行がconfigから削除)
 - input_console: 特殊オプション
 ```
+### その他
+Templateのcommands項目にて ```{{```と```}}```を使用することで、任意の値(パスワードなど)に置き換えることが可能です。  
+Ciscoなどの```enable password```などに対応することが可能となっております。  
+また、現時点では置き換え(replace)にしか対応していませんが、 将来的には、if文などへの対応も検討しております。
+
+#### 例) 
+Templateに```{{ enable_password }}```のように利用すると、config.json内のoptionから  
+```
+option: {
+    enable_password: "password_here"
+}
+```
+enable_passwordのキーに対して必要な値を返す仕組みになっています。     
+
 
 ## Config
 sample templateはconfig/config.jsonにあります
@@ -35,6 +49,11 @@ sample templateはconfig/config.jsonにあります
 - tmp_path:      一時ファイル置き場(gitや内部コンフィグの一時置き場として使用)
 - exec_time:     定期実行時の周期(秒)
 - debug:         Debugモード
+```
+### Option(自由記述)
+```
+- enable_password   enableパスワードの記入欄
+...
 ```
 ### Device
 ```

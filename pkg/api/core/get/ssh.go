@@ -1,11 +1,14 @@
 package get
 
 import (
+	"fmt"
 	"github.com/doornoc/config-collector/pkg/api/core/tool/config"
 	"github.com/doornoc/config-collector/pkg/api/core/tool/debug"
+	"github.com/doornoc/config-collector/pkg/api/core/tool/notify"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -137,6 +140,24 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 	}()
 
 	for _, command := range osTemplate.Commands {
+		result := regexp.MustCompile(`\{\{.+?\}\}`).FindAllStringSubmatch(command, -1)
+		for _, tmpCommandArray := range result {
+			// parse option command key
+			optionCommandKey := strings.TrimSpace(tmpCommandArray[0])
+			optionCommandKey = strings.Replace(optionCommandKey, " ", "", -1)
+			optionCommandKey = optionCommandKey[2 : len(optionCommandKey)-2]
+
+			value, ok := config.Conf.Options[optionCommandKey]
+			if !ok {
+				err := fmt.Errorf("[%s] [not found] option command (%s)", s.Device.Hostname, command)
+				debug.Err("[not found] option command", err)
+				notify.NotifyErrorToSlack(err)
+				continue
+			}
+
+			// replace command
+			command = strings.Replace(command, tmpCommandArray[0], value, -1)
+		}
 		time.Sleep(3 * time.Second)
 		inCh <- []byte(command + "\n")
 	}
