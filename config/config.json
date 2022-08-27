@@ -16,6 +16,9 @@
     "exec_time": 20,
     "debug": true
   },
+  "options": {
+    "enable_password": ""
+  },
   "devices": [
     {
       "name": "gw1",

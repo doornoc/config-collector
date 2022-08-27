@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	Controller Controller `json:"controller"`
-	Devices    []Device   `json:"devices"`
+	Controller Controller        `json:"controller"`
+	Options    map[string]string `json:"options"`
+	Devices    []Device          `json:"devices"`
 }
 
 type Controller struct {

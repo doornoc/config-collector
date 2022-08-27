@@ -35,6 +35,19 @@
       "ignore_line": [],
       "config_start": "#show running-config all",
       "config_end": "#configuration end"
+    },
+    {
+      "os_type": "cisco2",
+      "commands": [
+        "enable",
+        "{{ enable_password }}",
+        "terminal length 0",
+        "show running-config all",
+        "configuration end"
+      ],
+      "ignore_line": [],
+      "config_start": "#show running-config all",
+      "config_end": "#configuration end"
     }
   ]
 }
