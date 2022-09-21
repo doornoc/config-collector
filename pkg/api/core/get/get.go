@@ -61,15 +61,15 @@ func GettingDeviceConfig(isGit bool) error {
 	for _, device := range config.Conf.Devices {
 		s := sshStruct{Device: device}
 		console, err := s.accessSSHShell()
-		if console == "" {
-			debug.Err(fmt.Sprintf("Hostname: "+device.Name+"\n[accessSSHShell]: "), fmt.Errorf("consoleConfig is empty"))
-			notify.NotifyErrorToSlack(fmt.Errorf("Hostname: " + device.Name + "\n[accessSSHShell]: consoleConfig is empty"))
-			continue
-		}
 		if err != nil {
 			debug.Err(fmt.Sprintf("Hostname: "+device.Name+"\n[accessSSHShell]: "), err)
 			notify.NotifyErrorToSlack(fmt.Errorf("Hostname: "+device.Name+"\n[accessSSHShell]: %s", err))
 		} else {
+			if console == "" {
+				debug.Err(fmt.Sprintf("Hostname: "+device.Name+"\n[accessSSHShell]: "), fmt.Errorf("consoleConfig is empty"))
+				notify.NotifyErrorToSlack(fmt.Errorf("Hostname: " + device.Name + "\n[accessSSHShell]: consoleConfig is empty"))
+				continue
+			}
 			pushConfigs = append(pushConfigs, PushConfig{
 				Name:          device.Name,
 				ConfigConsole: console,

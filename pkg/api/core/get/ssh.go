@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"github.com/doornoc/config-collector/pkg/api/core/tool/config"
 	"github.com/doornoc/config-collector/pkg/api/core/tool/debug"
-	"github.com/doornoc/config-collector/pkg/api/core/tool/notify"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -99,6 +97,9 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 	if err != nil {
 		debug.Err("[OS Type]", err)
 	}
+	sshSessionFinish := false
+	stdoutBeforeTime := time.Now().Add(time.Second * -5)
+	stdoutUpdateTime := time.Now()
 
 	//stdin
 	go func() {
@@ -129,8 +130,11 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 					return
 				default:
 					n, err := stdout.Read(buf)
+					// Update time
+					stdoutUpdateTime = time.Now()
 					consoleLog += string(buf[:n])
 					if err != nil {
+						sshSessionFinish = true
 						debug.Err("[*normal* stdout finish]", err)
 						return
 					}
@@ -140,26 +144,21 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 	}()
 
 	for _, command := range osTemplate.Commands {
-		result := regexp.MustCompile(`\{\{.+?\}\}`).FindAllStringSubmatch(command, -1)
-		for _, tmpCommandArray := range result {
-			// parse option command key
-			optionCommandKey := strings.TrimSpace(tmpCommandArray[0])
-			optionCommandKey = strings.Replace(optionCommandKey, " ", "", -1)
-			optionCommandKey = optionCommandKey[2 : len(optionCommandKey)-2]
-
-			value, ok := config.Conf.Options[optionCommandKey]
-			if !ok {
-				err := fmt.Errorf("[%s] [not found] option command (%s)", s.Device.Hostname, command)
-				debug.Err("[not found] option command", err)
-				notify.NotifyErrorToSlack(err)
-				continue
-			}
-
-			// replace command
-			command = strings.Replace(command, tmpCommandArray[0], value, -1)
+		ls := loopStruct{
+			stdoutUpdateTime: &stdoutUpdateTime,
+			stdoutBeforeTime: &stdoutBeforeTime,
+			sshSessionFinish: &sshSessionFinish,
+			inCh:             &inCh,
+			Device:           s.Device,
 		}
-		time.Sleep(3 * time.Second)
-		inCh <- []byte(command + "\n")
+		err = ls.CommandExecLoop(command)
+		if err != nil {
+			log.Println(err)
+			session.Close()
+			close(cancel1)
+			close(cancel2)
+			return "", err
+		}
 	}
 
 	time.Sleep(3 * time.Second)
@@ -172,6 +171,11 @@ func (s *sshStruct) accessSSHShell() (string, error) {
 		log.Println("==========Console==========-")
 		log.Println(consoleLog)
 		log.Println("====================-")
+	}
+
+	// check ssh session end
+	if !sshSessionFinish {
+		return "", fmt.Errorf("No ssh session finish !!\n")
 	}
 
 	configConsole := ""
