@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   config-collector:
-    image: yoneyan/config-collector
+    image: yoneyan/config-collector:master
     volumes:
       - ./config:/opt/config
+    restart: always
     network_mode: bridge
