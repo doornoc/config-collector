@@ -2,9 +2,7 @@ version: '3.8'
 
 services:
   config-collector:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: yoneyan/config-collector
     volumes:
       - ./config:/opt/config
     network_mode: bridge
